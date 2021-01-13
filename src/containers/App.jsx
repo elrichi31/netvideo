@@ -5,32 +5,29 @@ import Categories from '../components/Categories'
 import Carousel from '../components/Carousel'
 import CarouselItem from '../components/CarouselItem'
 import Footer from "../components/Footer"
+import useInitialState from "../hooks/useInitialState.js"
 import "../assets/styles/App.scss"
+
+const API = 'http://localhost:3000/initalState/'
 const App = () => {
-    const [ videos, setVideos ] = useState({mylist: [], trends: [], originals: [] })
-    useEffect(() => {
-        fetch('http://localhost:3000/initalState')
-            .then(response => response.json())
-            .then(data => setVideos(data))
-    }, [])
-    console.log(videos)
+    const initialState = useInitialState(API)
     return (
         <div className="App">
             <Header/>
             <Search></Search>
-            {videos.mylist.length > 0 && (
+            {initialState.mylist.length > 0 && (
                 <Categories title="My list">
                     <Carousel>
-                        <CarouselItem></CarouselItem>
-                        <CarouselItem></CarouselItem>
-                        <CarouselItem></CarouselItem>
+                        {initialState.mylist.map(list =>
+                            <CarouselItem key={list.id} {...list}></CarouselItem>
+                        )}
                     </Carousel>
                 </Categories>
             )}
 
             <Categories title="On trend">
                 <Carousel>
-                    {videos.trends.map(item =>
+                    {initialState.trends.map(item =>
                         <CarouselItem key={item.id} {...item}></CarouselItem>
                     )}
                     <CarouselItem></CarouselItem>
@@ -39,7 +36,7 @@ const App = () => {
 
             <Categories title="Originals">
                 <Carousel>
-                    {videos.originals.map(origin =>
+                    {initialState.originals.map(origin =>
                         <CarouselItem key={origin.id} {...origin}></CarouselItem>
                     )}
                 </Carousel>
